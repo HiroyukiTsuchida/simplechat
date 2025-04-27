@@ -82,12 +82,17 @@ def lambda_handler(event, context):
         
         print("Calling Bedrock invoke_model API with payload:", json.dumps(request_payload))
         
+        # 修正前: Bedrockクライアントを使用して推論
         # invoke_model APIを呼び出し
-        response = bedrock_client.invoke_model(
-            modelId=MODEL_ID,
-            body=json.dumps(request_payload),
-            contentType="application/json"
-        )
+        # response = bedrock_client.invoke_model(
+        #     modelId=MODEL_ID,
+        #     body=json.dumps(request_payload),
+        #     contentType="application/json"
+        # )
+
+        # 修正後: FastAPIで立てたAPIに接続
+        fastapi_url = "http://localhost:8000/predict"  # FastAPIのエンドポイントURL
+        response = requests.post(fastapi_url, json=request_payload)  # FastAPIにリクエスト送信
         
         # レスポンスを解析
         response_body = json.loads(response['body'].read())
